@@ -1,0 +1,64 @@
+---
+- hosts: all                            # Указываем что на все хрсты будет устанавливаться
+  become: true                          # becomme или -b  означает что будет установка с повышенными правами (очень важно)
+  vars:                                 #позволяет хранить данные в переменных
+    container_count: 2                  # Колличество создоваемы контенеров
+    default_container_name: docker      #Имя контейнера по умолчанию
+    default_container_image: ubuntu     #Образ Docker по умолчанию, который будет использоваться при создании контейнеров.
+    default_container_command: sleep 1  #Команда по умолчанию для запуска в новых контейнерах.
+  tasks:                                # Добавляем зазачи для нашего playbook
+      - name: Install aptitude
+        apt:                                     #Здесь мы используеv apt встроенный модуль Ansible
+          name: aptitude                         #  инструмент для взаимодействия с менеджером пакетов Linux и установки необходимых системных пакетов (Не обязательно)
+          state: latest                          # Последняя версия
+          update_cache: true                     # Обновление кеша после утановки (необязательный параметр)
+
+      - name: Install required system packages
+        apt:
+          pkg:                                   # Добавляем необходимые программы (пакеты для работы с сертификатами ) для работы с Docker (много из этого уже установлено по умолчанию
+            - apt-transport-https
+            - ca-certificates
+            - curl
+            - software-properties-common
+            - python3-pip
+            - virtualenv
+            - python3-setuptools
+            - lsb-release
+            - gnupg
+          state: latest
+          update_cache: true
+
+      - name: Add Docker GPG apt Key             # Для проверки загрузки добавляется ключ Docker GPG, официальный репозиторий добавляется в качестве нового источника пакета, и Docker будет установлен
+        apt_key:                                 # Встроенный модуль builtin.apt_key https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_key_module.html#ansible-collections-ansible-builtin-apt-key-module
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add Docker Repository
+        apt_repository:                           # модуль для добавления репозитория builtin.apt_repository
+          repo: deb https://download.docker.com/linux/ubuntu focal stable
+          state: present
+
+      - name: Update apt and install docker-ce    # Установка самого Docker
+        apt:
+          name: docker-ce
+          state: latest
+          update_cache: true
+
+      - name: Install Docker Module for Python   # pip для установки модуля для Python, управляет зависимостями библиотеки Python
+        pip:
+          name: docker
+
+                                               # Переменные для создания Doccker Контейнеров
+      - name: Pull default Docker image
+        community.docker.docker_image:     # docker_image используется для извлечения образа Docker, который вы хотите использовать в качестве основы для ваших контейнеров.
+          name: "{{ default_container_image }}"
+          source: pull
+
+      - name: Create default containers         # docker_container позволяет указать специфику создаваемых вами контейнеров вместе с командой, которую вы хотите им передать.
+        community.docker.docker_container:
+           name: "{{ default_container_name }}{{ item }}"
+           image: "{{ default_container_image }}"
+           command: "{{ default_container_command }}"
+           state: present
+        with_sequence: count={{ container_count }}    # with_sequence это способ Ansible для создания цикла, и в этом случае он будет циклически создавать ваши контейнеры в соответствии с указанным вами количеством.
+                                                          #Это базовый цикл подсчета, поэтому item переменная здесь предоставляет число, представляющее текущую итерацию цикла. Этот номер используется здесь для именования ваших контейнеров.
