@@ -1,0 +1,18 @@
+# nginx PLAYBOOK
+---
+- hosts: "all"
+  become: true
+  gather_facts: yes
+  vars:
+    webserver_message: "I am running to the finish line(ne znay ge vilizet."  
+  tasks:
+  - name: "Install nginx via apt"
+    ansible.builtin.apt:
+      name: "nginx"
+      state: "latest"
+      update_cache: true
+  - name: create file dannie o hostname
+    template:
+      src: /etc/ansible/playbooks/templates/index.j2
+      dest: /var/www/html/index.html 
+   
