@@ -4,12 +4,12 @@
   become: true
   gather_facts: yes
   vars:
-    webserver_message: "I am running to the finish line(ne znay ge vilizet."  
+    webserver_message: "I am runni to the finish line(ne znay ge vilizet."  
   tasks:
   - name: "Install nginx via apt"
     ansible.builtin.apt:
-      name: "nginx"
-      state: "latest"
+      name: nginx
+      state: latest
       update_cache: true
   - name: create file dannie o hostname
     template:
