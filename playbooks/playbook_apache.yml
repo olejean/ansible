@@ -20,7 +20,8 @@
      copy:
        src: "{{ source_file }}" 
        dest: "{{ destin_file }}"
-        
+     notify: restart apache
+   
          #  notify: restarted apache
    
    - name: start service benabled
@@ -33,14 +34,15 @@
      debug:
       var: ansible_os_family     
 
-   - shell: uptime
-     register: results 
+   - shell: cat /etc/passwd | grep user
+     register: results
+   
+   - debug:
+      var: results     
 
   handlers:
-   - name: restarted apache
+   - name: restart apache
      service: 
        name: apache2
-       state: restarted  
-   
+       state: reloaded  
   
-    
