@@ -1,0 +1,19 @@
+---
+# Устанавливаем или удаляем postfix  взависимости от тега
+
+- hosts: "all"
+  gather_facts: yes
+  become: true
+
+  tasks:    
+  - name: Install Postfix
+    apt:
+      name: postfix
+      state: present
+    tags: init postfix
+
+  - name: Ununstall postfix
+    apt:
+      name: postfix
+      state: absent
+    tags: drop postfix    
