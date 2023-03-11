@@ -1,6 +1,6 @@
-Role Name
+Role: Install vsftp server
 =========
-vsftp
+
 
 Запускается ansible-playbook playbook_vsftpd.yml
 
