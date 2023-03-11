@@ -1,0 +1,20 @@
+---
+# tasks file for vsftpd
+- name:
+  apt:
+    name: vsftpd
+    state: latest
+      
+- name:
+  copy:
+    src: vsftpd.conf
+    dest: /etc/vsftpd.conf
+    owner: root
+    group: root  
+  notify: restart vsftpd
+
+- name: start ftp
+  service:
+    name: vsftpd
+    state: started
+

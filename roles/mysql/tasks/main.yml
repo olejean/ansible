@@ -1,0 +1,14 @@
+---
+# tasks file for mysql
+- name: install mysql
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: 
+    - mysql-server
+    - mysql-client
+
+- name: start service
+  service:
+    name: mysql
+    state: started  
