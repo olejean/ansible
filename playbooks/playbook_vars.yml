@@ -1,0 +1,28 @@
+---
+
+- hosts: all
+  become: true
+
+
+  vars:
+    message1: Privet
+    message2: World
+    secret: ervjwmwevowpevm;l
+
+
+  tasks:
+  - name: print secret variable
+    debug:
+      var: secret
+     
+    debug:
+       msg: "Secretnoe slova bratan: {{ secret }}"  
+
+    debug:
+       msg: "versiya OS:  {{ ansible_distribution }}"  
+    
+    shell: uptime
+    register: result 
+
+    debug:
+      msg: "vivesti {{ result }}"    

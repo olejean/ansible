@@ -14,6 +14,7 @@
      apt: 
       name: apache2
       state: latest
+     when: ansible_os_family == "Ubuntu"  
      
 
    - name: copy myhomepage to servers
