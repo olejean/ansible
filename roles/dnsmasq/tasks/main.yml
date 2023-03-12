@@ -1,0 +1,48 @@
+---
+# tasks file for dnsmasq
+- name: Del sim-link
+  command: unlink /etc/resolv.conf 
+   
+- name: Disabled system-resolved   
+  systemd:
+    name: systemd-resolved
+    state: stopped
+    enabled: false
+
+- name: Touch /etc/resolv.conf
+  shell: echo nameserver 8.8.8.8 | sudo tee /etc/resolv.conf  
+    
+- name: Install dnsmasq
+  apt:
+    name: dnsmasq
+    state: latest
+
+- name:
+  copy:
+    src: dnsmasq.conf
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+  
+
+- name: start dnsmasq
+  service:
+    name: dnsmasq
+    state: started
+
+- name: Add host to file Hosts
+  lineinfile:
+    path: /etc/hosts
+    line: 10.128.0.25 test_server_dns
+    create: yes
+  notify: restart dnsmasq
+
+
+- name: Add dns server dnsmasq to /etc/resolv.conf
+  lineinfile:
+    path: /etc/resolv.conf
+    line: nameserver 127.0.0.1
+    create: yes
+  
+
+
