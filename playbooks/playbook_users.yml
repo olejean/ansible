@@ -12,14 +12,15 @@
   - name: Create user, add group superusers
     user:
       name: "{{ item }}"
+      append: true   # Обязательно указать эту строчку, чтобы добавился в группу)
       state: present
-      group: superusers
+      groups: superusers
       shell: /bin/bash
   
     loop:
       - user2
       - user3
-   
+      - user4
   
 
   - name: Change File (vstavlaem stroku v opredelennoe mesto)
