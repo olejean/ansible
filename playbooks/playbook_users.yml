@@ -1,0 +1,36 @@
+---
+
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Create group superusers
+    group: 
+      name: superusers
+      state: present
+  
+  - name: Create user, add group superusers
+    user:
+      name: "{{ item }}"
+      append: true   # Обязательно указать эту строчку, чтобы добавился в группу)
+      state: present
+      groups: superusers
+      shell: /bin/bash
+  
+    loop:
+      - user2
+      - user3
+      - user4
+  
+
+  - name: Change File (vstavlaem stroku v opredelennoe mesto)
+    lineinfile:
+      insertafter: admin*  # это шаблон после которого встанет строка нужная (1,5 часа потратил времени)
+      line: "%superusers ALL=(ALL:ALL) ALL"  
+      path: /etc/sudoers
+      validate: /usr/sbin/visudo -cf %s
+
+
+
+   
+      

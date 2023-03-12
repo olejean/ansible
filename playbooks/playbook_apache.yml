@@ -1,0 +1,49 @@
+---
+- name: install apache and upload my web page
+  hosts: all
+  become: true
+
+
+  vars:
+   source_file: /home/oleg/index.html
+   destin_file: /var/www/html
+
+
+  tasks:
+   - name: install apache
+     apt: 
+      name: apache2
+      state: latest
+     when: ansible_os_family == "Ubuntu"  
+     
+
+   - name: copy myhomepage to servers
+     copy:
+       src: "{{ source_file }}" 
+       dest: "{{ destin_file }}"
+     notify: restart apache
+   
+         #  notify: restarted apache
+   
+   - name: start service benabled
+     service:
+      name: apache2
+      state: started
+      enabled: yes
+   
+   - name: print debug
+     debug:
+      var: ansible_os_family     
+
+   - shell: cat /etc/passwd | grep user
+     register: results
+   
+   - debug:
+      var: results     
+
+  handlers:
+   - name: restart apache
+     service: 
+       name: apache2
+       state: reloaded  
+  

@@ -1,0 +1,12 @@
+---
+- name: test ping  
+  hosts: all
+  become: true
+ 
+  tasks:
+  - name: ping
+    ping:
+
+  - name: vivod v file
+    shell: echo >> /tmp/file100
+      
