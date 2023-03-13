@@ -1,0 +1,67 @@
+---
+# tasks file for nginx_php_fpm
+- name: install nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: true
+
+
+- name: enable start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes  
+
+
+- name: Install required system packages
+  apt:
+    pkg:                                   # Добавляем необходимые зависимости  (пакеты для работы с сертификатами ) для работы php-fpm (много из этого уже установлено по умолчанию
+       - apt-transport-https
+       - ca-certificates
+       - curl
+       - software-properties-common
+       - lsb-release
+      
+    state: latest
+    update_cache: true
+
+- name: install PHP-FPM
+  apt:
+    pkg: 
+      - php8.1
+      - php8.1-fpm  
+      - php8.1-mysql
+      - php8.1-mbstring
+      - php8.1-xml
+      - php8.1-curl
+    state: latest
+    update_cache: true
+      
+- name: enable start php8.1-fpm.service
+  systemd:
+    name: php8.1-fpm.service
+    state: started
+    enabled: yes
+    
+- name: Copy file config skill2.ru.conf
+  copy:
+    src: /etc/ansible/roles/nginx_php_fpm/files/skill2.ru.conf 
+    dest: /etc/nginx/conf.d/skill2.ru.conf
+    owner: www-data
+    group: www-data
+  notify: restart nginx
+
+- name: Copy index.php
+  copy:
+    src: /etc/ansible/roles/nginx_php_fpm/files/index.php
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+    
+    
+
+      
+      
+        
+
