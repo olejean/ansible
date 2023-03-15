@@ -1,0 +1,25 @@
+---
+# tasks file for http
+- name: install nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: true
+
+- name: Copy file config skill2.ru.conf
+  copy:
+    src: /etc/ansible/prakticum_zadanie5/roles/http/files/skill2.ru.conf
+    dest: /etc/nginx/conf.d/skill2.ru.conf
+    owner: www-data
+    group: www-data
+  
+
+- name: Copy index.php
+  copy:
+    src: /etc/ansible/prakticum_zadanie5/roles/http/files/index.php
+    dest: /var/www/html/
+    owner: www-data
+    group: www-data
+  notify: restart nginx
+    
+      
