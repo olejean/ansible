@@ -1,0 +1,38 @@
+---
+# tasks file for php
+- name: Install required system packages
+  apt:
+    pkg:                                   # Добавляем необходимые зависимости  (пакеты для работы с сертификатами ) для работы php-fpm (много из этого уже установлено по умолчанию
+       - apt-transport-https
+       - ca-certificates
+       - curl
+       - software-properties-common
+       - lsb-release
+
+    state: latest
+    update_cache: true
+
+- name: install PHP-FPM
+  apt:
+    pkg:
+      - php8.1
+      - php8.1-fpm
+      - php8.1-mysql
+      - php8.1-mbstring
+      - php8.1-xml
+      - php8.1-curl
+    state: latest
+    update_cache: true
+
+- name: enable start php8.1-fpm.service
+  systemd:
+    name: php8.1-fpm.service
+    state: started
+    enabled: yes
+
+- name: Zamena socket na priem ot remote servera na 9000 port
+  lineinfile:
+    path: /etc/php/8.1/fpm/pool.d/www.conf
+    search_string: 'listen = /run/php/php8.1-fpm.sock'
+    line: listen = 158.160.62.59:9000
+  notify: restart php-fpm      

@@ -1,0 +1,15 @@
+---
+# tasks file for users
+- name: create adduser ansible-user
+  user: 
+    append: true 
+    name: ansible-user
+    state: present
+    groups: users
+    shell: /bin/bash
+    
+- name: Add ssh key to remote host 
+  authorized_key:
+    user: ansible-user
+    state: present  
+    key: "{{ lookup('file', '/etc/ansible/prakticum_zadanie5/roles/users/files/id_rsa.pub') }}"  
