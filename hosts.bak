@@ -22,11 +22,14 @@
 ## beta.example.org
 ## 192.168.1.100
 ## 192.168.1.110
-[nginx]
-158.160.62.59
+[database]
+vm1 158.160.62.59
 
-[php]
-158.160.59.51
+
+[web] 
+vm2 158.160.46.139
+vm3 158.160.51.36
+
 
 
 # If you have multiple hosts following a pattern, you can specify
